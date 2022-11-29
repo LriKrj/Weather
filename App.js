@@ -1,15 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons} from '@expo/vector-icons';  
+import News from './News';
+import Weather from './Weather'
+
+const Tab = createBottomTabNavigator();
+
+const screenOptions = ({ route }) => ({
+  tabBarIcon: ({color, size }) => {
+    let iconImage;
+
+    if (route.name === 'Weather') {
+      iconImage = 'md-cloudy-night-outline';
+    } else if (route.name === 'News') {
+      iconImage = 'newspaper-outline';
+    }
+
+    return <Ionicons name={iconImage} size={size} color={color} />;
+  }
+});
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Tab.Navigator screenOptions={screenOptions}>
+        <Tab.Screen name="Weather" component={Weather} />
+        <Tab.Screen name="News" component={News} />
+      </Tab.Navigator>
+    </NavigationContainer>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
