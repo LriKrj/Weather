@@ -5,7 +5,6 @@ import {API_URL} from '@env'
 
 export default function LocalWeather() {
   const [forecast, setForecast] = useState(null);
-  
 
   const getWeather = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
@@ -21,16 +20,11 @@ export default function LocalWeather() {
     fetch( `${API_URL}&lat=${lat}&lon=${lon}`)
     .then(response => response.json())
     .then(responseJson => setForecast(responseJson))
-    
 
     .catch(error => { 
       Alert.alert('Error', error); 
-    
   });
-   
     console.log(forecast)
-
-    
   }
 
   useEffect(() => {
@@ -46,7 +40,6 @@ export default function LocalWeather() {
 
   const weatherNow = forecast.current.weather[0];
 
-  
   return (
     <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Weather at your location</Text>
@@ -67,19 +60,18 @@ export default function LocalWeather() {
             horizontal
             keyExtractor={(item, index) => index.toString()}
             renderItem={(hour) => {
-              const weather = hour.item.weather[0];
+              let weather = hour.item.weather[0];
               let dt = new Date(hour.item.dt * 1000);
               
               return <View style={styles.time}>
                 <Text>{dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
-                
-                <Text>{Math.round(hour.item.temp)}°C</Text>
                 <Image
                   style={styles.smallPicture}
                   source={{
                     uri: `http://openweathermap.org/img/wn/${weather.icon}.png`,
                   }}
                 />
+                <Text>{Math.round(hour.item.temp)}°C</Text>
                 <Text>{weather.main}</Text>
               </View>
             }}
@@ -100,6 +92,7 @@ const styles = StyleSheet.create({
       marginLeft: 10,
       marginBottom: 10,
       color: 'blue',
+      textAlign: 'center'
     },
     title: { 
       textAlign: 'center',
