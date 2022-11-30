@@ -37,22 +37,17 @@ export default function LocalWeather() {
     </Text>
   }
   
-
-  const weatherNow = forecast.current.weather[0];
-
   return (
     <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Weather at your location</Text>
         <View style={styles.current}>
           <Image
             style={styles.bigPicture}
-            source={{
-              uri: `http://openweathermap.org/img/wn/${weatherNow.icon}@2x.png`
-            }}
+            source={{uri: `http://openweathermap.org/img/wn/${forecast.current.weather[0].icon}@2x.png`}}
           />
           <Text style={styles.temperature}>{Math.round(forecast.current.temp)}°C</Text>
         </View>
-        <Text style={styles.description}>{weatherNow.main}</Text>
+        <Text style={styles.description}>{forecast.current.weather[0].main}</Text>
         <View>
           <Text style={styles.forecast}>Next hours</Text>
           <FlatList 
@@ -60,19 +55,17 @@ export default function LocalWeather() {
             horizontal
             keyExtractor={(item, index) => index.toString()}
             renderItem={(hour) => {
-              let weather = hour.item.weather[0];
               let dt = new Date(hour.item.dt * 1000);
-              
               return <View style={styles.time}>
                 <Text>{dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
                 <Image
                   style={styles.smallPicture}
                   source={{
-                    uri: `http://openweathermap.org/img/wn/${weather.icon}.png`,
+                    uri: `http://openweathermap.org/img/wn/${hour.item.weather[0].icon}.png`,
                   }}
                 />
                 <Text>{Math.round(hour.item.temp)}°C</Text>
-                <Text>{weather.main}</Text>
+                <Text>{hour.item.weather[0].main}</Text>
               </View>
             }}
           />
