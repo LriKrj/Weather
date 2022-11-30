@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, Alert} from 'react-native';
 import * as Location from 'expo-location';
-
-
-
-
-const api = `bf8879e23b85ac1c63278161ccb8412c`;
-let URL = `https://api.openweathermap.org/data/2.5/onecall?&units=metric&lang=fi&exclude=minutely&appid=${api}`;
-
-
+import {API_URL} from '@env'
 
 export default function LocalWeather() {
   const [forecast, setForecast] = useState(null);
@@ -25,7 +18,7 @@ export default function LocalWeather() {
     let lat = current.coords.latitude
     let lon = current.coords.longitude
     
-    fetch( `${URL}&lat=${lat}&lon=${lon}`)
+    fetch( `${API_URL}&lat=${lat}&lon=${lon}`)
     .then(response => response.json())
     .then(responseJson => setForecast(responseJson))
     
@@ -61,7 +54,7 @@ export default function LocalWeather() {
           <Image
             style={styles.bigPicture}
             source={{
-              uri: `http://openweathermap.org/img/wn/${weatherNow.icon}@2x.png`,
+              uri: `http://openweathermap.org/img/wn/${weatherNow.icon}@2x.png`
             }}
           />
           <Text style={styles.temperature}>{Math.round(forecast.current.temp)}°C</Text>
@@ -75,9 +68,9 @@ export default function LocalWeather() {
             keyExtractor={(item, index) => index.toString()}
             renderItem={(hour) => {
               const weather = hour.item.weather[0];
-              var dt = new Date(hour.item.dt * 1000);
+              let dt = new Date(hour.item.dt * 1000);
               
-              return <View style={styles.hour}>
+              return <View style={styles.time}>
                 <Text>{dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
                 
                 <Text>{Math.round(hour.item.temp)}°C</Text>
@@ -127,7 +120,7 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       fontSize: 24,
     },
-    hour: {
+    time: {
       alignItems: 'center',
     },
     bigPicture: {
