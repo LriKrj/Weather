@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, ActivityIndicator, SafeAreaView, ScrollView, FlatList, Alert, RefreshControl, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, Alert} from 'react-native';
 import * as Location from 'expo-location';
 
 
 
-const openWeatherKey = `bf8879e23b85ac1c63278161ccb8412c`;
-let URL = `https://api.openweathermap.org/data/2.5/onecall?&units=metric&exclude=minutely&appid=${openWeatherKey}`;
+
+const api = `bf8879e23b85ac1c63278161ccb8412c`;
+let URL = `https://api.openweathermap.org/data/2.5/onecall?&units=metric&lang=fi&exclude=minutely&appid=${api}`;
 
 
 
@@ -14,18 +15,27 @@ export default function LocalWeather() {
   
 
   const getWeather = async () => {
-   
-
     const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
+    if (status !== "granted") {
       Alert.alert("No permission to get location");
+      return
     }
 
-    let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
-    fetch( `${URL}&lat=${location.coords.latitude}&lon=${location.coords.longitude}`)
+    let current = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
+    let lat = current.coords.latitude
+    let lon = current.coords.longitude
+    
+    fetch( `${URL}&lat=${lat}&lon=${lon}`)
     .then(response => response.json())
     .then(responseJson => setForecast(responseJson))
     
+
+    .catch(error => { 
+      Alert.alert('Error', error); 
+    
+  });
+   
+    console.log(forecast)
 
     
   }
@@ -46,32 +56,22 @@ export default function LocalWeather() {
   
   return (
     <SafeAreaView style={styles.container}>
-      
-      
         <Text style={styles.title}>Weather at your location</Text>
-        
         <View style={styles.current}>
           <Image
-            style={styles.largeIcon}
+            style={styles.bigPicture}
             source={{
-              uri: `http://openweathermap.org/img/wn/${weatherNow.icon}@4x.png`,
+              uri: `http://openweathermap.org/img/wn/${weatherNow.icon}@2x.png`,
             }}
           />
-          <Text style={styles.currentTemp}>{Math.round(forecast.current.temp)}°C</Text>
+          <Text style={styles.temperature}>{Math.round(forecast.current.temp)}°C</Text>
         </View>
-        <Text style={styles.currentDescription}>{weatherNow.description}</Text>
-        
-          <View style={styles.info}>
-            
-            
-          
-          
-        </View>
-          
+        <Text style={styles.description}>{weatherNow.main}</Text>
         <View>
           <Text style={styles.forecast}>Next hours</Text>
-          <FlatList horizontal
-            data={forecast.hourly.slice(0,6)}
+          <FlatList 
+            data={forecast.hourly.slice(1,7)}
+            horizontal
             keyExtractor={(item, index) => index.toString()}
             renderItem={(hour) => {
               const weather = hour.item.weather[0];
@@ -82,70 +82,59 @@ export default function LocalWeather() {
                 
                 <Text>{Math.round(hour.item.temp)}°C</Text>
                 <Image
-                  style={styles.smallIcon}
+                  style={styles.smallPicture}
                   source={{
                     uri: `http://openweathermap.org/img/wn/${weather.icon}.png`,
                   }}
                 />
-                <Text>{weather.description}</Text>
+                <Text>{weather.main}</Text>
               </View>
             }}
           />
         </View>
-      
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-    title: {
-      
+  container: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
+    forecast: {
+      fontSize: 30,
+      marginTop: 10,
+      marginLeft: 10,
+      marginBottom: 10,
+      color: 'blue',
+    },
+    title: { 
       textAlign: 'center',
       fontSize: 36,
       fontWeight: 'bold',
       color: 'blue',
       marginTop: 10
     },
-    forecast: {
-      fontSize: 40,
-      marginTop: 10,
-      marginLeft: 10,
-      marginBottom: 10,
-      color: 'blue',
-    },
-    container: {
-      flex: 1,
-      backgroundColor: '#FFFBF6',
-      
-    },
-    
     current: {
-      
       alignItems: 'center',
-      
     },
-    currentTemp: {
+    temperature: {
       fontSize: 32,
       fontWeight: 'bold',
       textAlign: 'center',
     },  
-    currentDescription: {
-      width: '100%',
+    description: {
       textAlign: 'center',
-      fontWeight: '200',
       fontSize: 24,
-      marginBottom: 5
     },
     hour: {
-      
-      
       alignItems: 'center',
     },
-    largeIcon: {
+    bigPicture: {
       width: 300,
-      height: 250,
+      height: 300,
     },
-    smallIcon: {
+    smallPicture: {
         width: 100,
         height: 120,
       },

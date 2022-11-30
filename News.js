@@ -22,9 +22,9 @@ export default function News(){
         <SafeAreaView style={styles.container}>
           <FlatList
             data={data}
-            keyExtractor={(item, index) => index}
-            renderItem={({ item }) =>
-              <View style={styles.news}>
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => {
+              return <View style={styles.news}>
                 <Text style={styles.title}>
                   {item.title}
                 </Text>
@@ -33,7 +33,7 @@ export default function News(){
                    {item.name}
                 </Button>
               </View>
-            }
+            }}
            />
         </SafeAreaView>
       );
