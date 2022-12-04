@@ -54,18 +54,19 @@ export default function LocalWeather() {
             data={forecast.hourly.slice(1,7)}
             horizontal
             keyExtractor={(item, index) => index.toString()}
-            renderItem={(hour) => {
-              let dt = new Date(hour.item.dt * 1000);
+            renderItem={(time) => {
+              let unixTime = time.item.dt
+              let fixedTime = new Date(unixTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
               return <View style={styles.time}>
-                <Text>{dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</Text>
+                <Text>{fixedTime}</Text>
                 <Image
                   style={styles.smallPicture}
                   source={{
-                    uri: `http://openweathermap.org/img/wn/${hour.item.weather[0].icon}.png`,
+                    uri: `http://openweathermap.org/img/wn/${time.item.weather[0].icon}.png`,
                   }}
                 />
-                <Text>{Math.round(hour.item.temp)}°C</Text>
-                <Text>{hour.item.weather[0].main}</Text>
+                <Text>{Math.round(time.item.temp)}°C</Text>
+                <Text>{time.item.weather[0].main}</Text>
               </View>
             }}
           />
