@@ -17,7 +17,7 @@ const screenOptions = ({ route }) => ({
     } else if (route.name === 'News') {
       iconImage = 'newspaper-outline';
     }
-
+    //palauttaa ikonikomponentin
     return <Ionicons name={iconImage} size={size} color={color} />;
   }
 });
@@ -25,7 +25,7 @@ const screenOptions = ({ route }) => ({
 export default function App() {
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={screenOptions}>
+      <Tab.Navigator screenOptions={screenOptions}> 
         <Tab.Screen name="Weather" component={Weather} />
         <Tab.Screen name="News" component={News} />
       </Tab.Navigator>

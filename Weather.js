@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, Alert} from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, FlatList, Alert, ScrollView} from 'react-native';
 import * as Location from 'expo-location';
 import {API_URL} from '@env'
 
 export default function LocalWeather() {
   const [forecast, setForecast] = useState(null);
 
+  //lupa sijaintitiedon hakemiselle
   const getWeather = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       Alert.alert("No permission to get location");
       return
     }
-
+    //nykyinen sijainti
     let current = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
     let lat = current.coords.latitude
     let lon = current.coords.longitude
-    
+    //API:sta nykyiselle sijainnille säätiedot
     fetch( `${API_URL}&lat=${lat}&lon=${lon}`)
     .then(response => response.json())
     .then(responseJson => setForecast(responseJson))
@@ -38,7 +39,7 @@ export default function LocalWeather() {
   }
   
   return (
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
         <Text style={styles.title}>Weather at your location</Text>
         <View style={styles.current}>
           <Image
@@ -51,12 +52,14 @@ export default function LocalWeather() {
         <View>
           <Text style={styles.forecast}>Next hours</Text>
           <FlatList 
-            data={forecast.hourly.slice(1,7)}
+            data={forecast.hourly.slice(1,10)}
             horizontal
             keyExtractor={(item, index) => index.toString()}
             renderItem={(time) => {
+              //api antaa ajan unixaikana joka on sekunteja
               let unixTime = time.item.dt
-              let fixedTime = new Date(unixTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+              //javascript määrittää aikaa millisekunteina sekuntien sijaan joten kerrotaan tuhannella
+              let fixedTime = new Date(unixTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) //ios jättää sekunnit pois android ei?
               return <View style={styles.time}>
                 <Text>{fixedTime}</Text>
                 <Image
@@ -71,7 +74,7 @@ export default function LocalWeather() {
             }}
           />
         </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 

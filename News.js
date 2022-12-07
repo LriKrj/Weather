@@ -22,16 +22,16 @@ export default function News(){
     return (
         <SafeAreaView style={styles.container}>
           <FlatList
-            data={data}
+            data={data.slice(0,9)}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => {
               return <View style={styles.news}>
                 <Text style={styles.title}>
                   {item.title}
                 </Text>
-                <Image style={styles.image} source={{ uri: item.urlToImage }} />
+                <Image style={styles.image} source={{ uri: item.urlToImage }}  />
                 <TouchableOpacity style={styles.button}   onPress={() => Linking.openURL(item.url)}>
-                   {item.name}
+                   
                    <Text style={styles.buttontext}>Read full article</Text>
 
                 </TouchableOpacity>
@@ -58,7 +58,7 @@ export default function News(){
         },
         image: {
           height: 220,
-          flex: 1,
+          
         },
         button: {
         alignItems: "center",
